@@ -132,6 +132,7 @@ const Navbar = () => {
    ============================================= */
 const Hero = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -142,8 +143,19 @@ const Hero = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const desktopScene = "https://prod.spline.design/sFVgdf5wd8JOuu8f/scene.splinecode";
+  const mobileScene = "https://prod.spline.design/0fHk9xFAvfkFkvSt/scene.splinecode";
+
   return (
     <section id="hero" className="relative h-screen w-full flex flex-col items-center justify-start overflow-hidden">
+      
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 z-[60] flex flex-col items-center justify-center bg-[#050510]">
+          <div className="w-12 h-12 rounded-full border-t-2 border-neon-purple animate-spin mb-4" />
+          <p className="text-neon-purple font-display text-[12px] uppercase tracking-[0.3em] animate-pulse">Initializing System...</p>
+        </div>
+      )}
 
       {/* LAYER 1: Gradient Background (Bottommost) */}
       <div className="absolute inset-0 z-0">
@@ -153,24 +165,15 @@ const Hero = () => {
         <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-pink-900/20 via-purple-800/10 to-transparent blur-[100px]" />
       </div>
 
-      {/* LAYER 2: 3D Object — CENTERED, behind text (DESKTOP ONLY) */}
-      {!isMobile && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center">
-          <div className="w-full h-full opacity-80">
-            <Spline 
-              scene="https://prod.spline.design/sFVgdf5wd8JOuu8f/scene.splinecode" 
-            />
-          </div>
+      {/* LAYER 2: 3D Object — CENTERED, behind text */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center transition-opacity duration-1000" style={{ opacity: isLoading ? 0 : 0.8 }}>
+        <div className="w-full h-full">
+          <Spline 
+            scene={isMobile ? mobileScene : desktopScene} 
+            onLoad={() => setIsLoading(false)}
+          />
         </div>
-      )}
-
-      {/* MOBILE FALLBACK: High-End Gradient & Glow (MOBILE ONLY) */}
-      {isMobile && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center overflow-hidden">
-          <div className="w-[300px] h-[300px] bg-neon-purple/20 blur-[100px] rounded-full animate-pulse" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://raw.githubusercontent.com/Harsh-Chauhan05/TicketIQ/main/client/src/assets/hero.png')] bg-contain bg-center bg-no-repeat opacity-40" />
-        </div>
-      )}
+      </div>
 
       {/* LAYER 3: Hero Text — ON TOP, pushed below navbar */}
       <div className="relative z-20 flex flex-col items-center text-center px-6 pointer-events-none w-full max-w-5xl pt-[100px]">

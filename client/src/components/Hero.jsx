@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 
 const Hero = () => {
   const [isMobile, setIsMobile] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     const checkMobile = () => {
@@ -14,20 +15,27 @@ const Hero = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const desktopScene = "https://prod.spline.design/sFVgdf5wd8JOuu8f/scene.splinecode";
+  const mobileScene = "https://prod.spline.design/0fHk9xFAvfkFkvSt/scene.splinecode";
+
   return (
     <section className="relative min-h-screen w-full overflow-hidden bg-[#080510] font-outfit">
       
-      {/* 1. Spline 3D Background (DESKTOP ONLY) */}
-      {!isMobile && (
-        <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto">
-          <Spline scene="https://prod.spline.design/sFVgdf5wd8JOuu8f/scene.splinecode" />
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 z-[60] flex flex-col items-center justify-center bg-[#080510]">
+          <div className="w-12 h-12 rounded-full border-t-2 border-[#00E5FF] animate-spin mb-4" />
+          <p className="text-[#00E5FF] font-display text-[12px] uppercase tracking-[0.3em] animate-pulse">Initializing Interface...</p>
         </div>
       )}
 
-      {/* MOBILE FALLBACK (MOBILE ONLY) */}
-      {isMobile && (
-        <div className="absolute inset-0 z-0 w-full h-full bg-[url('https://raw.githubusercontent.com/Harsh-Chauhan05/TicketIQ/main/client/src/assets/hero.png')] bg-contain bg-center bg-no-repeat opacity-30 pointer-events-none" />
-      )}
+      {/* 1. Spline 3D Background */}
+      <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto transition-opacity duration-1000" style={{ opacity: isLoading ? 0 : 1 }}>
+        <Spline 
+          scene={isMobile ? mobileScene : desktopScene} 
+          onLoad={() => setIsLoading(false)}
+        />
+      </div>
 
       {/* Subtle vignettes to ensure text remains readable */}
       <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#080510]/80 via-[#080510]/20 to-transparent pointer-events-none" />
