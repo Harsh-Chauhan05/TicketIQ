@@ -8,7 +8,7 @@ const Hero = () => {
       
       {/* 1. Spline 3D Background - Now fills entire screen */}
       <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto">
-        <Spline scene="https://prod.spline.design/ZvAm7csnGKeNmwiK/scene.splinecode" />
+        <Spline scene="https://prod.spline.design/sFVgdf5wd8JOuu8f/scene.splinecode" />
       </div>
 
       {/* Subtle vignettes to ensure text remains readable */}

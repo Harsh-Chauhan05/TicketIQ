@@ -81,22 +81,21 @@ const register = async (req, res) => {
       return error(res, 'Email already registered', 400);
     }
 
-    // Get or create the Domain document for this domain (used as tenantId)
-    let domainDoc = await Domain.findOne({ name: domain, tenantId: { $exists: true } });
+    const mongoose = require('mongoose');
 
-    // For MVP: each domain name maps to one shared tenant (domain itself is tenant)
-    // We'll find an existing domain doc or create a new one placeholder
+    // Get or create the Domain document for this domain (used as tenantId)
+    let domainDoc = await Domain.findOne({ name: domain });
+
     if (!domainDoc) {
-      // Create a temporary placeholder domain doc to get its _id as tenantId
-      const tempDomain = await Domain.create({
-        tenantId: new (require('mongoose').Types.ObjectId)(),
+      // Create a new domain doc to get its _id as tenantId
+      domainDoc = await Domain.create({
+        tenantId: new mongoose.Types.ObjectId(),
         name: domain,
         rules: DEFAULT_RULES[domain] || [],
       });
-      // Use its own _id as tenantId (self-referential for MVP)
-      tempDomain.tenantId = tempDomain._id;
-      await tempDomain.save();
-      domainDoc = tempDomain;
+      // Use its own _id as tenantId
+      domainDoc.tenantId = domainDoc._id;
+      await domainDoc.save();
 
       // Seed SLA policies for this new tenant
       const slaPolicies = DEFAULT_SLA_POLICIES.map(p => ({
@@ -107,7 +106,7 @@ const register = async (req, res) => {
       await SLAPolicy.insertMany(slaPolicies, { ordered: false }).catch(() => {});
     }
 
-    const tenantId = domainDoc._id;
+    const tenantId = domainDoc.tenantId;
 
     // Generate verification token
     const crypto = require('crypto');
@@ -125,14 +124,10 @@ const register = async (req, res) => {
       isVerified: false 
     });
 
-    // Send verification email
-    try {
-      const { sendEmail, templates } = require('../utils/emailService');
-      const emailContent = templates.verifyEmail(user.name, verificationToken);
-      await sendEmail({ to: user.email, ...emailContent });
-    } catch (e) {
-      console.error('Verification email failed:', e.message);
-    }
+    // Send verification email (Async - don't await so registration finishes fast)
+    const { sendEmail, templates } = require('../utils/emailService');
+    const emailContent = templates.verifyEmail(user.name, verificationToken);
+    sendEmail({ to: user.email, ...emailContent }).catch(e => console.error('Verification mail failed:', e.message));
 
     const token = generateToken(user._id);
 

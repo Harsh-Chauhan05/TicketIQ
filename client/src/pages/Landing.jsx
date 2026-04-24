@@ -145,7 +145,7 @@ const Hero = () => {
       {/* LAYER 2: 3D Object — CENTERED, behind text */}
       <div className="absolute inset-0 z-10 flex items-center justify-center">
         <div className="w-full h-full">
-          <Spline scene="https://prod.spline.design/ZvAm7csnGKeNmwiK/scene.splinecode" />
+          <Spline scene="https://prod.spline.design/sFVgdf5wd8JOuu8f/scene.splinecode" />
         </div>
       </div>
 
