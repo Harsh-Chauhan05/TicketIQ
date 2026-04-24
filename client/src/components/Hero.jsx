@@ -17,7 +17,7 @@ const Hero = () => {
   }, []);
 
   const desktopScene = "https://prod.spline.design/sFVgdf5wd8JOuu8f/scene.splinecode";
-  const mobileScene = "https://prod.spline.design/0fHk9xFAvfkFkvSt/scene.splinecode";
+  const mobileScene = "https://prod.spline.design/2zGYC3LxjOcOd858/scene.splinecode";
 
   return (
     <section className="relative min-h-screen w-full overflow-hidden bg-[#080510] font-outfit">
