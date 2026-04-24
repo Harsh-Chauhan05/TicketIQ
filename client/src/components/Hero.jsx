@@ -3,13 +3,31 @@ import Spline from '@splinetool/react-spline';
 import { motion } from 'framer-motion';
 
 const Hero = () => {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
     <section className="relative min-h-screen w-full overflow-hidden bg-[#080510] font-outfit">
       
-      {/* 1. Spline 3D Background - Now fills entire screen */}
-      <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto">
-        <Spline scene="https://prod.spline.design/sFVgdf5wd8JOuu8f/scene.splinecode" />
-      </div>
+      {/* 1. Spline 3D Background (DESKTOP ONLY) */}
+      {!isMobile && (
+        <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto">
+          <Spline scene="https://prod.spline.design/sFVgdf5wd8JOuu8f/scene.splinecode" />
+        </div>
+      )}
+
+      {/* MOBILE FALLBACK (MOBILE ONLY) */}
+      {isMobile && (
+        <div className="absolute inset-0 z-0 w-full h-full bg-[url('https://raw.githubusercontent.com/Harsh-Chauhan05/TicketIQ/main/client/src/assets/hero.png')] bg-contain bg-center bg-no-repeat opacity-30 pointer-events-none" />
+      )}
 
       {/* Subtle vignettes to ensure text remains readable */}
       <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#080510]/80 via-[#080510]/20 to-transparent pointer-events-none" />
