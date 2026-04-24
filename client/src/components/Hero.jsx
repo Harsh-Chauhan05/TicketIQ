@@ -1,6 +1,7 @@
 import React from 'react';
 import Spline from '@splinetool/react-spline';
 import { motion } from 'framer-motion';
+import { Loading as CircleLoader } from './ui/CircleUniqueLoad';
 
 const Hero = () => {
   const [isMobile, setIsMobile] = React.useState(false);
@@ -23,9 +24,8 @@ const Hero = () => {
       
       {/* Loading Overlay */}
       {isLoading && (
-        <div className="absolute inset-0 z-[60] flex flex-col items-center justify-center bg-[#080510]">
-          <div className="w-12 h-12 rounded-full border-t-2 border-[#00E5FF] animate-spin mb-4" />
-          <p className="text-[#00E5FF] font-display text-[12px] uppercase tracking-[0.3em] animate-pulse">Initializing Interface...</p>
+        <div className="absolute inset-0 z-[60]">
+          <CircleLoader />
         </div>
       )}
 

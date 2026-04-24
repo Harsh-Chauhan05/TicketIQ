@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Spline from '@splinetool/react-spline';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { Loading as CircleLoader } from '../components/ui/CircleUniqueLoad';
 import {
   Zap, Shield, BarChart3, Bell, Settings, Workflow,
   ArrowRight, Play, ChevronRight, Star,
@@ -151,9 +152,8 @@ const Hero = () => {
       
       {/* Loading Overlay */}
       {isLoading && (
-        <div className="absolute inset-0 z-[60] flex flex-col items-center justify-center bg-[#050510]">
-          <div className="w-12 h-12 rounded-full border-t-2 border-neon-purple animate-spin mb-4" />
-          <p className="text-neon-purple font-display text-[12px] uppercase tracking-[0.3em] animate-pulse">Initializing System...</p>
+        <div className="absolute inset-0 z-[60]">
+          <CircleLoader />
         </div>
       )}
 
