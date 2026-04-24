@@ -29,13 +29,20 @@ const Hero = () => {
         </div>
       )}
 
-      {/* 1. Spline 3D Background */}
-      <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto transition-opacity duration-1000" style={{ opacity: isLoading ? 0 : 1 }}>
-        <Spline 
-          scene={isMobile ? mobileScene : desktopScene} 
-          onLoad={() => setIsLoading(false)}
-        />
-      </div>
+      {/* 1. Spline 3D Background (DESKTOP ONLY) */}
+      {!isMobile && (
+        <div className="absolute inset-0 z-0 w-full h-full pointer-events-auto transition-opacity duration-1000" style={{ opacity: isLoading ? 0 : 1 }}>
+          <Spline 
+            scene={desktopScene} 
+            onLoad={() => setIsLoading(false)}
+          />
+        </div>
+      )}
+
+      {/* MOBILE FALLBACK (MOBILE ONLY) */}
+      {isMobile && (
+        <div className="absolute inset-0 z-0 w-full h-full bg-[url('https://raw.githubusercontent.com/Harsh-Chauhan05/TicketIQ/main/client/src/assets/hero.png')] bg-contain bg-center bg-no-repeat opacity-30 pointer-events-none" />
+      )}
 
       {/* Subtle vignettes to ensure text remains readable */}
       <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#080510]/80 via-[#080510]/20 to-transparent pointer-events-none" />
