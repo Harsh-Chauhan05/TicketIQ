@@ -286,7 +286,28 @@ const verifyEmail = async (req, res) => {
     user.verificationToken = undefined; // Clear the token
     await user.save();
 
-    return success(res, null, 'Email verified successfully. You can now log in.');
+    const authToken = generateToken(user._id);
+
+    // Set httpOnly cookie (same as login)
+    res.cookie('token', authToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    return success(res, {
+      token: authToken,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        domain: user.domain,
+        tenantId: user.tenantId,
+        isVerified: user.isVerified,
+      },
+    }, 'Email verified successfully.');
   } catch (err) {
     console.error('verifyEmail error:', err.message);
     return error(res, 'Server error during email verification', 500);

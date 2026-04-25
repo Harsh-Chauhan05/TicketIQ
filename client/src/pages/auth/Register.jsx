@@ -11,7 +11,7 @@ const Register = () => {
     email: '',
     password: '',
     domain: 'ecommerce', // Matches backend enum
-    role: 'admin'        // Owners are admins
+    role: 'customer'     // Default to customer
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -98,9 +98,9 @@ const Register = () => {
                     onChange={handleChange}
                     className="w-full bg-[#13151f] border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-neon-cyan/50 transition-all appearance-none cursor-pointer"
                   >
-                    <option value="admin">Workspace Admin</option>
-                    <option value="agent">Support Agent</option>
                     <option value="customer">Customer</option>
+                    <option value="agent">Support Agent</option>
+                    <option value="admin">Workspace Admin</option>
                   </select>
                 </div>
               </div>

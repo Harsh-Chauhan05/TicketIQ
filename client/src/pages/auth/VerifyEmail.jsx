@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 import { Loading as CircleLoader } from '../../components/ui/CircleUniqueLoad';
 import axiosInstance from '../../api/axiosInstance';
+import { useAuth } from '../../context/AuthContext';
 
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
@@ -11,6 +12,8 @@ const VerifyEmail = () => {
   const [status, setStatus] = useState('loading'); // loading, success, error
   const [message, setMessage] = useState('');
   const hasAttempted = useRef(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   useEffect(() => {
     if (!token) {
@@ -25,8 +28,20 @@ const VerifyEmail = () => {
     const verifyToken = async () => {
       try {
         const response = await axiosInstance.post('/auth/verify-email', { token });
+        const { token: authToken, user } = response.data.data;
+        
+        login(authToken, user); // Log them in!
+
         setStatus('success');
-        setMessage(response.data.message || 'Email verified successfully!');
+        setMessage('Email verified successfully! Redirecting to dashboard...');
+
+        // Auto-redirect after 2 seconds
+        setTimeout(() => {
+          if (user.role === 'admin') navigate('/admin/dashboard');
+          else if (user.role === 'agent') navigate('/agent/dashboard');
+          else navigate('/customer/dashboard');
+        }, 2000);
+
       } catch (err) {
         setStatus('error');
         setMessage(err.response?.data?.message || 'Verification failed. The token may be invalid or expired.');
@@ -64,13 +79,9 @@ const VerifyEmail = () => {
               <h2 className="font-display text-2xl font-bold text-white mb-2">Verified!</h2>
               <p className="text-text-muted text-sm mb-8">{message}</p>
               
-              <Link 
-                to="/login"
-                className="w-full h-12 bg-neon-cyan text-black font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-white transition-colors"
-              >
-                Continue to Login
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              <div className="mt-6">
+                <CircleLoader screenHFull={false} />
+              </div>
             </div>
           )}
 
