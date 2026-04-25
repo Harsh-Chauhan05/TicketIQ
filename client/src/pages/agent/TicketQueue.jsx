@@ -83,12 +83,13 @@ const TicketQueue = () => {
                     onClick={() => window.location.href = `/agent/tickets/${t._id}`}
                   >
                     <td className="px-6 py-4">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-[14px] shadow-sm border transition-all ${
-                        (t.priorityScore || 0) > 80 ? 'bg-red-500/10 text-red-500 border-red-500/20 shadow-red-500/5' :
-                        (t.priorityScore || 0) > 50 ? 'bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-amber-500/5' :
-                        'bg-neon-cyan/10 text-neon-cyan border-neon-cyan/20 shadow-neon-cyan/5'
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-[16px] shadow-sm border transition-all ${
+                        t.finalPriority === 'critical' ? 'bg-red-500/10 text-red-500 border-red-500/20 shadow-red-500/5' :
+                        t.finalPriority === 'high' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-amber-500/5' :
+                        t.finalPriority === 'medium' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20 shadow-blue-500/5' :
+                        'bg-green-500/10 text-green-500 border-green-500/20 shadow-green-500/5'
                       }`}>
-                        {t.priorityScore || '--'}
+                        {t.finalPriority ? t.finalPriority.charAt(0).toUpperCase() : '-'}
                       </div>
                     </td>
                     <td className="px-6 py-5">
@@ -162,12 +163,12 @@ const TicketQueue = () => {
                     </h3>
                   </div>
                   <div className={`w-12 h-12 rounded-2xl flex flex-col items-center justify-center font-display border shadow-lg flex-shrink-0 ${
-                    (t.priorityScore || 0) > 80 ? 'bg-red-500/10 text-red-500 border-red-500/20 shadow-red-500/5' :
-                    (t.priorityScore || 0) > 50 ? 'bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-amber-500/5' :
-                    'bg-neon-cyan/10 text-neon-cyan border-neon-cyan/20 shadow-neon-cyan/5'
+                    t.finalPriority === 'critical' ? 'bg-red-500/10 text-red-500 border-red-500/20 shadow-red-500/5' :
+                    t.finalPriority === 'high' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-amber-500/5' :
+                    t.finalPriority === 'medium' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20 shadow-blue-500/5' :
+                    'bg-green-500/10 text-green-500 border-green-500/20 shadow-green-500/5'
                   }`}>
-                    <span className="text-[14px] font-bold leading-none">{t.priorityScore || '--'}</span>
-                    <span className="text-[8px] uppercase tracking-tighter opacity-70">Score</span>
+                    <span className="text-[18px] font-bold leading-none">{t.finalPriority ? t.finalPriority.charAt(0).toUpperCase() : '-'}</span>
                   </div>
                 </div>
 

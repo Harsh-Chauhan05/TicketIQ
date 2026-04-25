@@ -195,7 +195,7 @@ const Navbar = ({ onMenuClick }) => {
                 initial={{ opacity: 0, y: 15, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                className="absolute top-full right-0 mt-3 w-96 glass-strong border border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] z-50 overflow-hidden"
+                className="absolute top-full right-0 mt-3 w-96 bg-[#0a0a16] border border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] z-50 overflow-hidden"
               >
                 <div className="p-5 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
                   <div>
@@ -264,10 +264,13 @@ const Navbar = ({ onMenuClick }) => {
             <div className="text-[13px] font-bold text-white leading-none mb-1">{user?.name}</div>
             <div className="text-[10px] text-text-muted font-display uppercase tracking-widest">{user?.role}</div>
           </div>
-          <Link to={`/${user?.role}/profile`} className="w-11 h-11 rounded-xl bg-gradient-to-br from-neon-purple via-neon-cyan to-neon-purple p-[1.5px] transition-transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(34,211,238,0.2)]">
-            <div className="w-full h-full rounded-[10px] bg-[#050510] flex items-center justify-center text-[15px] font-bold text-white uppercase font-display">
-              {user?.name?.charAt(0)}
+          <Link to={`/${user?.role}/profile`} className="relative w-12 h-12 rounded-full p-[2px] bg-gradient-to-r from-neon-purple to-neon-cyan group transition-transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(34,211,238,0.3)]">
+            <div className="w-full h-full rounded-full bg-[#050510] flex items-center justify-center border-2 border-transparent group-hover:bg-[#0a0a16] transition-colors">
+              <span className="text-[16px] font-bold text-white uppercase font-display tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-neon-purple to-neon-cyan">
+                {user?.name?.charAt(0)}
+              </span>
             </div>
+            <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-[#050510] rounded-full shadow-[0_0_10px_rgba(34,197,94,0.6)]"></div>
           </Link>
           <button 
             onClick={logout}

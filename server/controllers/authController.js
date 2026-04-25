@@ -142,6 +142,7 @@ const register = async (req, res) => {
           role: user.role,
           domain: user.domain,
           tenantId: user.tenantId,
+          isVerified: user.isVerified,
         },
       },
       'Registration successful',
@@ -199,6 +200,7 @@ const login = async (req, res) => {
         role: user.role,
         domain: user.domain,
         tenantId: user.tenantId,
+        isVerified: user.isVerified,
       },
     }, 'Login successful');
   } catch (err) {
@@ -220,6 +222,7 @@ const getMe = async (req, res) => {
       domain: req.user.domain,
       tenantId: req.user.tenantId,
       isActive: req.user.isActive,
+      isVerified: req.user.isVerified,
       createdAt: req.user.createdAt,
     });
   } catch (err) {

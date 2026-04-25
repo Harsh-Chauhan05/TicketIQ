@@ -151,12 +151,12 @@ const TicketDetail = () => {
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center font-display font-bold text-white flex-shrink-0 ${
                       isEmployee ? 'bg-gradient-to-br from-neon-purple to-neon-cyan' : 'bg-white/10'
                     }`}>
-                      {isEmployee ? c.author?.name?.charAt(0) : <User className="w-5 h-5 text-white/50" />}
+                      {isEmployee ? 'S' : <User className="w-5 h-5 text-white/50" />}
                     </div>
                     <div className={`flex flex-col ${isEmployee ? 'items-start' : 'items-end'} max-w-[80%]`}>
                       <div className="flex items-center gap-2 mb-1.5 px-1">
                         <span className="text-[13px] font-bold text-white">
-                          {isEmployee ? `${c.author?.name} (Support)` : 'You'}
+                          {isEmployee ? 'Support Agent' : 'You'}
                         </span>
                         <span className="text-[11px] text-text-muted">
                           {formatDistanceToNow(new Date(c.createdAt), { addSuffix: true })}

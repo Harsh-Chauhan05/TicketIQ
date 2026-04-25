@@ -96,7 +96,7 @@ const Navbar = () => {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="pointer-events-auto absolute top-20 left-4 right-4 glass-strong rounded-2xl p-6 md:hidden"
+          className="pointer-events-auto absolute top-20 left-4 right-4 bg-[#0a0a16] border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] rounded-2xl p-6 md:hidden"
         >
           {links.map((link) => (
             <a
