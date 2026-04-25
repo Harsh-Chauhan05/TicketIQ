@@ -266,4 +266,28 @@ const logout = (req, res) => {
   return success(res, null, 'Logged out successfully');
 };
 
-module.exports = { register, login, getMe, logout, updateMe, DEFAULT_RULES, DEFAULT_SLA_POLICIES };
+// @desc    Verify user email
+// @route   POST /api/auth/verify-email
+// @access  Public
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) return error(res, 'Token is required', 400);
+
+    const user = await User.findOne({ verificationToken: token });
+    if (!user) {
+      return error(res, 'Invalid or expired verification token', 400);
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined; // Clear the token
+    await user.save();
+
+    return success(res, null, 'Email verified successfully. You can now log in.');
+  } catch (err) {
+    console.error('verifyEmail error:', err.message);
+    return error(res, 'Server error during email verification', 500);
+  }
+};
+
+module.exports = { register, login, getMe, logout, updateMe, verifyEmail, DEFAULT_RULES, DEFAULT_SLA_POLICIES };
