@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ticketAPI } from '../../api/tickets';
 import { Ticket as TicketIcon, Clock, AlertCircle, CheckCircle2, ChevronRight, Plus } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { useSocket } from '../../context/SocketContext';
 
 const StatusBadge = ({ status }) => {
   const styles = {
@@ -38,20 +39,31 @@ const CustomerDashboard = () => {
   const navigate = useNavigate();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const socket = useSocket();
+
+  const fetchTickets = async () => {
+    try {
+      const res = await ticketAPI.getTickets({ sort: '-createdAt' });
+      setTickets(res.data.data.tickets || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const res = await ticketAPI.getTickets({ sort: '-createdAt' });
-        setTickets(res.data.data.tickets || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchTickets();
   }, []);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('ticket_updated', fetchTickets);
+      return () => {
+        socket.off('ticket_updated', fetchTickets);
+      };
+    }
+  }, [socket]);
 
   if (loading) {
     return <div className="flex h-64 items-center justify-center text-text-muted">Loading your workspace...</div>;

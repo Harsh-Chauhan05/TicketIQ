@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { slaAPI } from '../../api/sla';
-import { BarChart3, TrendingUp, TrendingDown, ShieldAlert, CheckCircle2, Loader2, RefreshCw } from 'lucide-react';
+import { BarChart3, TrendingUp, TrendingDown, ShieldAlert, CheckCircle2, Loader2, RefreshCw, Download } from 'lucide-react';
 
 const PRIORITY_CONFIG = {
   critical: { color: 'bg-red-500', text: 'text-red-400', border: 'border-red-500/30', bg: 'bg-red-500/10' },
@@ -45,6 +45,39 @@ const SLAReports = () => {
     }
   };
 
+  const exportToCSV = () => {
+    if (!report) return;
+    
+    const compliance = report.totalTickets > 0 ? (((report.resolvedOnTime) / report.totalTickets) * 100).toFixed(1) : 100;
+    
+    // Create CSV rows
+    const rows = [
+      ['TicketIQ SLA Report', new Date().toLocaleDateString()],
+      [],
+      ['Metric', 'Value'],
+      ['Total Tickets Tracked', report.totalTickets],
+      ['SLA Compliance Rate', `${compliance}%`],
+      ['Total SLA Breaches', report.slaBreached],
+      ['Overall Breach Rate', `${report.breachRate}%`],
+      ['Tickets Resolved On Time', report.resolvedOnTime],
+      [],
+      ['Breaches By Priority', 'Count'],
+      ['Critical', report.breachByPriority?.critical || 0],
+      ['High', report.breachByPriority?.high || 0],
+      ['Medium', report.breachByPriority?.medium || 0],
+      ['Low', report.breachByPriority?.low || 0]
+    ];
+    
+    const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `sla_report_${new Date().getTime()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   useEffect(() => { fetchReport(); }, []);
 
   if (loading) return (
@@ -68,14 +101,23 @@ const SLAReports = () => {
           <h1 className="font-display text-4xl font-bold text-white tracking-tight mb-2">Performance Analytics</h1>
           <p className="text-text-muted text-lg">Live SLA compliance metrics for your team.</p>
         </div>
-        <button
-          onClick={() => fetchReport(true)}
-          disabled={refreshing}
-          className="btn-secondary px-5 py-2.5 text-[14px] flex items-center gap-2"
-        >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-          Refresh
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={exportToCSV}
+            className="btn-secondary px-5 py-2.5 text-[14px] flex items-center gap-2 border-neon-cyan/30 text-neon-cyan hover:bg-neon-cyan/10"
+          >
+            <Download className="w-4 h-4" />
+            Export CSV
+          </button>
+          <button
+            onClick={() => fetchReport(true)}
+            disabled={refreshing}
+            className="btn-secondary px-5 py-2.5 text-[14px] flex items-center gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* KPI Cards */}

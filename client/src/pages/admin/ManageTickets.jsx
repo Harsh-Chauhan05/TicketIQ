@@ -3,25 +3,39 @@ import { ticketAPI } from '../../api/tickets';
 import { Link } from 'react-router-dom';
 import { Search, ChevronRight, Clock, ShieldAlert } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { useSocket } from '../../context/SocketContext';
 
 const ManageTickets = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const socket = useSocket();
+
+  const fetchTickets = async () => {
+    try {
+      const res = await ticketAPI.getTickets({ sort: '-createdAt' });
+      setTickets(res.data.data.tickets || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const res = await ticketAPI.getTickets({ sort: '-createdAt' });
-        setTickets(res.data.data.tickets || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchTickets();
   }, []);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('new_ticket', fetchTickets);
+      socket.on('ticket_updated', fetchTickets);
+      return () => {
+        socket.off('new_ticket', fetchTickets);
+        socket.off('ticket_updated', fetchTickets);
+      };
+    }
+  }, [socket]);
 
   const filteredTickets = tickets.filter(t => 
     t.title.toLowerCase().includes(searchTerm.toLowerCase()) || 

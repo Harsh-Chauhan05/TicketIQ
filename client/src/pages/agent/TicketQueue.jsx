@@ -4,26 +4,40 @@ import { Link } from 'react-router-dom';
 import { Clock, Filter, Search, ChevronRight } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../../context/AuthContext';
+import { useSocket } from '../../context/SocketContext';
 
 const TicketQueue = () => {
   const { user } = useAuth();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('Open'); // Open | Critical | All | My Tickets
+  const socket = useSocket();
+
+  const fetchTickets = async () => {
+    try {
+      const res = await ticketAPI.getTickets({ sort: '-priorityScore' });
+      setTickets(res.data.data.tickets || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const res = await ticketAPI.getTickets({ sort: '-priorityScore' });
-        setTickets(res.data.data.tickets || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchTickets();
   }, []);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('new_ticket', fetchTickets);
+      socket.on('ticket_updated', fetchTickets);
+      return () => {
+        socket.off('new_ticket', fetchTickets);
+        socket.off('ticket_updated', fetchTickets);
+      };
+    }
+  }, [socket]);
 
   const filteredTickets = tickets.filter(t => {
     if (filter === 'Open') return t.status === 'open' || t.status === 'in_progress';
