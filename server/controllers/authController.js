@@ -314,4 +314,86 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getMe, logout, updateMe, verifyEmail, DEFAULT_RULES, DEFAULT_SLA_POLICIES };
+// @desc    Forgot Password
+// @route   POST /api/auth/forgot-password
+// @access  Public
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return error(res, 'There is no user with that email', 404);
+    }
+
+    const crypto = require('crypto');
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+    await user.save({ validateBeforeSave: false });
+
+    const { sendEmail, templates } = require('../utils/emailService');
+    const emailContent = templates.forgotPassword(user.name, resetToken);
+    
+    sendEmail({ to: user.email, ...emailContent }).catch(e => {
+      console.error('Forgot password email failed:', e.message);
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      user.save({ validateBeforeSave: false });
+    });
+
+    return success(res, null, 'Email sent with password reset instructions');
+  } catch (err) {
+    console.error('forgotPassword error:', err.message);
+    return error(res, 'Server error during forgot password', 500);
+  }
+};
+
+// @desc    Reset Password
+// @route   PUT /api/auth/reset-password/:token
+// @access  Public
+const resetPassword = async (req, res) => {
+  try {
+    const crypto = require('crypto');
+    const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return error(res, 'Invalid or expired reset token', 400);
+    }
+
+    const { password } = req.body;
+    if (!password || password.length < 8) {
+      return error(res, 'Password must be at least 8 characters', 400);
+    }
+
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    return success(res, null, 'Password reset successfully');
+  } catch (err) {
+    console.error('resetPassword error:', err.message);
+    return error(res, 'Server error during password reset', 500);
+  }
+};
+
+module.exports = {
+  register,
+  login,
+  getMe,
+  updateMe,
+  logout,
+  verifyEmail,
+  forgotPassword,
+  resetPassword,
+  DEFAULT_RULES,
+  DEFAULT_SLA_POLICIES
+};

@@ -46,6 +46,8 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     verificationToken: String,
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
     themePreference: {
       type: String,
       enum: ['light', 'dark'],

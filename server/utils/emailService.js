@@ -108,7 +108,6 @@ const templates = {
     `
   }),
 
-  // 4. Verification Email
   verifyEmail: (userName, token) => ({
     subject: `🔐 Verify your TicketIQ Account`,
     html: `
@@ -121,6 +120,24 @@ const templates = {
            Verify Email
         </a>
         <p style="font-size: 12px; color: #666; margin-top: 30px;">If you didn't create this account, please ignore this email.</p>
+      </div>
+    `
+  }),
+
+  // 5. Forgot Password Email
+  forgotPassword: (userName, resetToken) => ({
+    subject: `🔑 Password Reset Request`,
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #0a0a0a; color: #ffffff; border: 1px solid #333;">
+        <h2 style="color: #8b5cf6;">TicketIQ Security</h2>
+        <p>Hello ${userName},</p>
+        <p>You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n</p>
+        <p>Click the button below to set a new password. This link is valid for 10 minutes.</p>
+        <a href="${process.env.CLIENT_URL || 'http://localhost:5173'}/reset-password/${resetToken}" 
+           style="display: inline-block; background: #8b5cf6; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px;">
+           Reset Password
+        </a>
+        <p style="font-size: 12px; color: #666; margin-top: 30px;">If you did not request this, please ignore this email and your password will remain unchanged.</p>
       </div>
     `
   })

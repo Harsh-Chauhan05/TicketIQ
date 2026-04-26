@@ -195,7 +195,7 @@ const Navbar = ({ onMenuClick }) => {
                 initial={{ opacity: 0, y: 15, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                className="absolute top-full right-0 mt-3 w-96 bg-[#0a0a16] border border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] z-50 overflow-hidden"
+                className="absolute top-full -right-4 sm:right-0 mt-3 w-[calc(100vw-32px)] sm:w-96 max-w-sm bg-[#0a0a16] border border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] z-50 overflow-hidden"
               >
                 <div className="p-5 border-b border-white/10 bg-white/[0.03] flex items-center justify-between">
                   <div>
